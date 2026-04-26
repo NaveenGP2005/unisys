@@ -287,6 +287,171 @@ class SignalProcessor:
         data['frequency_axis'] = np.array(data['frequency_axis'])
         data['raw_data'] = np.array(data['raw_data'])
         return SpectralFeatures(**data)
+    
+    def generate_synthetic_signal(self, tissue_type="Healthy Bone", duration=1.0, 
+                                  sampling_rate=None):
+        """
+        Generate a realistic synthetic tissue signal for EDUCATIONAL purposes.
+        
+        This is NOT real tissue data - it's for understanding how the system works.
+        
+        Args:
+            tissue_type: Type of tissue ("Healthy Bone", "Fractured Bone", etc.)
+            duration: Signal duration in seconds
+            sampling_rate: Samples per second
+            
+        Returns:
+            numpy array: Synthetic accelerometer signal
+        """
+        sampling_rate = sampling_rate or self.config.sampling_rate
+        num_samples = int(duration * sampling_rate)
+        time = np.linspace(0, duration, num_samples, endpoint=False)
+        
+        # Tissue type characteristics
+        tissue_profiles = {
+            "Healthy Bone": {"freq": 200, "q": 20, "amp": 0.8, "noise": 0.02},
+            "Fractured Bone": {"freq": 120, "q": 8, "amp": 0.4, "noise": 0.15},
+            "Healing Bone": {"freq": 150, "q": 14, "amp": 0.6, "noise": 0.08},
+            "Osteoporotic": {"freq": 120, "q": 10, "amp": 0.5, "noise": 0.12},
+            "Dense Bone": {"freq": 260, "q": 24, "amp": 0.9, "noise": 0.01},
+            "Soft Tissue": {"freq": 75, "q": 8, "amp": 0.3, "noise": 0.2},
+        }
+        
+        if tissue_type not in tissue_profiles:
+            tissue_type = "Healthy Bone"
+        
+        profile = tissue_profiles[tissue_type]
+        frequency = profile["freq"]
+        q_factor = profile["q"]
+        amplitude = profile["amp"]
+        noise_level = profile["noise"]
+        
+        # Calculate damping from Q-factor
+        damping = 1.0 / (2 * q_factor)
+        
+        # Generate damped sinusoidal signal
+        signal = (amplitude * 
+                  np.exp(-damping * 2 * np.pi * frequency * time) * 
+                  np.sin(2 * np.pi * frequency * time))
+        
+        # Add realistic noise
+        noise = np.random.normal(0, noise_level, num_samples)
+        signal = signal + noise
+        
+        return signal
+    
+    def analyze(self, signal, sampling_rate=None):
+        """
+        Analyze an accelerometer signal (synthetic or real).
+        
+        Simplified interface for quick analysis.
+        
+        Args:
+            signal: numpy array of accelerometer data
+            sampling_rate: Samples per second
+            
+        Returns:
+            dict: Analysis results including frequency, Q-factor, quality, etc.
+        """
+        sampling_rate = sampling_rate or self.config.sampling_rate
+        
+        # Convert to numpy array if needed
+        signal = np.asarray(signal)
+        
+        # Compute FFT for frequency analysis
+        n = len(signal)
+        fft_result = fft(signal)
+        frequencies = fftfreq(n, 1/sampling_rate)
+        
+        # Only positive frequencies
+        positive_freqs = frequencies[:n//2]
+        magnitudes = np.abs(fft_result[:n//2])
+        
+        # Find dominant frequency
+        dominant_idx = np.argmax(magnitudes[1:]) + 1  # Skip DC component
+        dominant_frequency = positive_freqs[dominant_idx]
+        dominant_magnitude = magnitudes[dominant_idx]
+        
+        # Calculate SNR estimate
+        signal_power = np.mean(signal**2)
+        noise_level = np.std(signal)
+        snr_db = 10 * np.log10(signal_power / (noise_level**2 + 1e-10))
+        
+        # Estimate Q-factor from spectral width
+        threshold = dominant_magnitude / np.sqrt(2)
+        above_threshold = magnitudes > threshold
+        
+        if np.sum(above_threshold) > 1:
+            peak_indices = np.where(above_threshold)[0]
+            bandwidth = positive_freqs[peak_indices[-1]] - positive_freqs[peak_indices[0]]
+            q_factor = dominant_frequency / (bandwidth + 0.1)
+        else:
+            q_factor = 10.0
+        
+        q_factor = np.clip(q_factor, 3, 30)
+        
+        # Determine signal quality
+        if snr_db > 25:
+            quality = "EXCELLENT"
+        elif snr_db > 15:
+            quality = "GOOD"
+        elif snr_db > 10:
+            quality = "ACCEPTABLE"
+        elif snr_db > 5:
+            quality = "POOR"
+        else:
+            quality = "INVALID"
+        
+        # Analyze stationarity
+        segment_size = n // 4
+        segment_means = [
+            np.mean(signal[i*segment_size:(i+1)*segment_size])
+            for i in range(4)
+        ]
+        stationarity = 1.0 - (np.std(segment_means) / (np.std(signal) + 1e-10))
+        stationarity = np.clip(stationarity, 0, 1)
+        
+        # Estimate tissue type
+        freq = dominant_frequency
+        if freq < 100:
+            tissue_type = "Soft Tissue"
+        elif freq < 140:
+            tissue_type = "Fractured/Healing Bone"
+        elif freq < 200:
+            tissue_type = "Osteoporotic Bone"
+        else:
+            tissue_type = "Healthy/Dense Bone"
+        
+        # Calculate Tissue Stiffness Index
+        tsi = min(100, (freq / 3) + (snr_db * 2) + 20)
+        tsi = max(0, tsi)
+        
+        # Determine status
+        if tsi < 40:
+            status = "ACUTE"
+        elif tsi < 60:
+            status = "HEALING"
+        elif tsi < 80:
+            status = "GOOD PROGRESS"
+        else:
+            status = "CLEARED"
+        
+        return {
+            'dominant_frequency': dominant_frequency,
+            'frequency_hz': dominant_frequency,
+            'q_factor': q_factor,
+            'snr_db': snr_db,
+            'signal_quality': quality,
+            'tissue_type': tissue_type,
+            'tsi': tsi,
+            'status': status,
+            'signal_power': signal_power,
+            'noise_level': noise_level,
+            'stationarity': stationarity,
+            'damping': 1.0 / (2 * q_factor),
+            'frequencies': positive_freqs,
+            'magnitudes': magnitudes,
+        }
 
 
 def demonstrate_signal_processing():
