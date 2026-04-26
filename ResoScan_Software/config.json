@@ -1,0 +1,51 @@
+{
+  "device": {
+    "serial_port": "COM3",
+    "baudrate": 115200,
+    "timeout": 1.0,
+    "auto_detect": true
+  },
+  "signal_processing": {
+    "sampling_rate": 3200,
+    "fft_points": 1024,
+    "window_type": "hann",
+    "freq_min": 20.0,
+    "freq_max": 1000.0
+  },
+  "waveform_generation": {
+    "chirp_duration_ms": 500,
+    "impulse_width_ms": 20,
+    "frequency_sweep": [20, 1000]
+  },
+  "clinical_thresholds": {
+    "fracture_healing": {
+      "safe_weight_bearing_tsi": 0.8,
+      "active_healing_tsi": 0.5
+    },
+    "pneumothorax": {
+      "hyper_resonance_ratio": 2.0
+    },
+    "bladder_compliance": {
+      "elevated_pressure_velocity": 4.0
+    }
+  },
+  "ml_models": {
+    "training": {
+      "test_split": 0.2,
+      "random_state": 42,
+      "n_estimators": 100
+    },
+    "inference": {
+      "confidence_threshold": 0.75
+    }
+  },
+  "ui": {
+    "update_interval_ms": 500,
+    "plot_history_size": 100,
+    "theme": "dark"
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  }
+}
