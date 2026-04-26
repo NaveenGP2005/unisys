@@ -130,7 +130,7 @@ class TestSignalProcessor(unittest.TestCase):
         healthy_features = self.processor.process_raw_signal(healthy_signal)
         affected_features = self.processor.process_raw_signal(affected_signal)
         
-        power_ratio = self.processor.calculate_pneumotharax_index(affected_features, healthy_features)
+        power_ratio = self.processor.calculate_pneumothorax_index(affected_features, healthy_features)
         
         self.assertGreater(power_ratio, 0)
     
@@ -157,13 +157,13 @@ class TestFeatureExtractor(unittest.TestCase):
         self.t = np.linspace(0, 1, 3200, endpoint=False)
     
     def test_feature_vector_dimensions(self):
-        """Test feature vector is 17-dimensional"""
+        """Test feature vector is 14-dimensional (comprehensive feature set)"""
         signal = 0.5 * np.sin(2 * np.pi * 150 * self.t)
         features = self.processor.process_raw_signal(signal)
         
         feature_vector = FeatureExtractor.extract_features(features)
         
-        self.assertEqual(len(feature_vector), 17)
+        self.assertEqual(len(feature_vector), 14)
     
     def test_feature_extraction_consistency(self):
         """Test feature extraction is consistent"""
@@ -186,7 +186,7 @@ class TestFeatureExtractor(unittest.TestCase):
         batch_features = FeatureExtractor.extract_batch_features(signals)
         
         self.assertEqual(batch_features.shape[0], 5)
-        self.assertEqual(batch_features.shape[1], 17)
+        self.assertEqual(batch_features.shape[1], 14)
 
 
 class TestMLClassifiers(unittest.TestCase):

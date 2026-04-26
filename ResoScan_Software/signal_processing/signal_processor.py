@@ -103,16 +103,16 @@ class SignalProcessor:
         )
         
         if len(peaks) == 0:
-            logger.warning("No peaks detected in spectrum")
-            peaks = np.array([np.argmax(psd_one_sided)])
-        
-        # Sort peaks by prominence
-        peak_prominences = properties['prominences']
-        sorted_idx = np.argsort(peak_prominences)[::-1]  # Descending
-        peaks = peaks[sorted_idx]
-        
-        # Step 4: Extract features
-        resonant_idx = peaks[0]
+            logger.warning("No peaks detected in spectrum - using maximum")
+            resonant_idx = np.argmax(psd_one_sided)
+            peaks = np.array([resonant_idx])  # Add the max as a peak
+        else:
+            # Sort peaks by prominence
+            peak_prominences = properties['prominences']
+            sorted_idx = np.argsort(peak_prominences)[::-1]  # Descending
+            peaks = peaks[sorted_idx]
+            # Step 4: Extract features
+            resonant_idx = peaks[0]
         resonant_freq = freq_axis[resonant_idx]
         resonant_amp = np.sqrt(psd_one_sided[resonant_idx]) * 9.81  # Convert to m/s²
         
