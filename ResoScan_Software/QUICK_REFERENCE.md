@@ -3,6 +3,7 @@
 ## Running the System
 
 ### 1. Run All Tests
+
 ```bash
 # Unit tests
 python -m pytest tests/test_all.py -v
@@ -12,11 +13,13 @@ python test_tibia_integration.py
 ```
 
 ### 2. Test Tibia Analyzer Directly
+
 ```bash
 python signal_processing/tibia_analyzer.py
 ```
 
 ### 3. Run Main Application
+
 ```bash
 python resoscan.py --mode demo        # Demo mode
 python resoscan.py --mode simulate    # Simulation mode
@@ -37,12 +40,14 @@ python resoscan.py --mode hardware    # Hardware mode (ESP32)
 ## Key Features
 
 ### Signal Analysis
+
 - FFT-based resonance frequency detection
 - Quality factor calculation
 - Damping ratio estimation
 - Pneumothorax detection
 
 ### Tibia-Specific Analysis
+
 - Frequency classification (healthy/healing/fractured)
 - Bilateral limb comparison
 - TSI (Tissue Stiffness Index) calculation
@@ -50,6 +55,7 @@ python resoscan.py --mode hardware    # Hardware mode (ESP32)
 - Clinical weight-bearing recommendations
 
 ### Clinical Decision Support
+
 - Acute fracture detection
 - Healing phase identification
 - Days-since-fracture estimation
@@ -60,11 +66,13 @@ python resoscan.py --mode hardware    # Hardware mode (ESP32)
 ## Clinical Thresholds (Tibia)
 
 ### Resonant Frequency
+
 - **Normal**: 180-220 Hz
 - **Healing**: 100-180 Hz
 - **Fractured**: 80-150 Hz
 
 ### TSI (Tissue Stiffness Index)
+
 - **0-40%**: Acute - Immobilization required
 - **40-60%**: Early - No weight bearing
 - **60-80%**: Active - Partial weight bearing
@@ -75,18 +83,22 @@ python resoscan.py --mode hardware    # Hardware mode (ESP32)
 ## File Locations
 
 **Core System**:
+
 - `signal_processing/signal_processor.py` - Signal analysis engine
 - `signal_processing/tibia_analyzer.py` - Tibia-specific analysis
 - `ml_models/classifier.py` - ML models
 
 **Tests**:
+
 - `tests/test_all.py` - 15 unit tests
 - `test_tibia_integration.py` - 6 integration tests
 
 **Entry Points**:
+
 - `resoscan.py` - Main application
 
 **Documentation**:
+
 - `DEPLOYMENT_STATUS.md` - Full status report
 - `TODO.md` - Remaining work items
 
@@ -95,21 +107,25 @@ python resoscan.py --mode hardware    # Hardware mode (ESP32)
 ## Recent Fixes
 
 ### Bug #1: Peak Detection Crash (CRITICAL)
+
 - **File**: `signal_processor.py` lines 105-114
 - **Status**: ✅ FIXED
 - **Impact**: Fixed 4 unit test failures
 
 ### Bug #2: TSI Overflow
+
 - **File**: `tibia_analyzer.py` lines 110-139
 - **Status**: ✅ FIXED
 - **Impact**: TSI now correctly 0-100%
 
 ### Bug #3: Function Name Typo
+
 - **File**: `test_all.py` line 133
 - **Status**: ✅ FIXED
 - **Impact**: Fixed 1 test failure
 
 ### Bug #4: Feature Vector Dimension
+
 - **File**: `test_all.py` lines 167, 189
 - **Status**: ✅ FIXED
 - **Impact**: Fixed 3 test failures
@@ -149,6 +165,7 @@ INTEGRATION TESTS: 6/6 PASSING ✅
 ## Support
 
 For issues or questions:
+
 1. Check `DEPLOYMENT_STATUS.md` for detailed information
 2. Check `TODO.md` for known limitations
 3. Run tests to verify system functionality

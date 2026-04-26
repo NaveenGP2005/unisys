@@ -8,7 +8,7 @@
 ⚠️ **NEEDS FIXING**: Unit tests failing (8/15 failing)  
 ⚠️ **INCOMPLETE**: Several incomplete functions  
 ❌ **NOT DONE**: Hardware testing  
-❌ **NOT DONE**: Real patient validation  
+❌ **NOT DONE**: Real patient validation
 
 ---
 
@@ -18,7 +18,7 @@
 
 ```
 FAILED - test_feature_extraction
-FAILED - test_process_raw_signal  
+FAILED - test_process_raw_signal
 FAILED - test_resonant_frequency_detection
 FAILED - test_tissue_stiffness_index
 FAILED - test_pneumotharax_index
@@ -29,6 +29,7 @@ FAILED - test_complete_workflow
 ```
 
 ### Problem: Peak Detection
+
 - `process_raw_signal()` in `signal_processor.py` fails when no peaks found
 - Line 115 crashes: `resonant_idx = peaks[0]` when peaks array is empty
 - Affects 80% of test failures
@@ -38,6 +39,7 @@ FAILED - test_complete_workflow
 **File**: `signal_processing/signal_processor.py` (Line 100-125)
 
 **Issue**: When `find_peaks()` returns no peaks:
+
 ```python
 if len(peaks) == 0:
     logger.warning("No peaks detected in spectrum")
@@ -47,6 +49,7 @@ resonant_idx = peaks[0]  # ← crashes if peaks is empty
 ```
 
 **Solution Needed**:
+
 ```python
 # Fix the peak detection logic
 if len(peaks) == 0:
@@ -61,24 +64,28 @@ else:
 ## 2. INCOMPLETE FUNCTIONS
 
 ### Function 1: `process_raw_signal()` - signal_processor.py
+
 - **Status**: 50% complete, has bugs
 - **Issue**: Peak detection fails
 - **Impact**: Breaks all tests using it
 - **Fix Time**: 15 minutes
 
 ### Function 2: `calculate_tissue_stiffness_index()` - signal_processor.py
+
 - **Status**: Stub only
 - **Issue**: Not fully implemented
 - **Impact**: Clinical calculations missing
 - **Fix Time**: 20 minutes
 
 ### Function 3: `calculate_pneumothorax_index()` - signal_processor.py
+
 - **Status**: Stub only
 - **Issue**: Not implemented
 - **Impact**: Pneumothorax detection unavailable
 - **Fix Time**: 20 minutes
 
 ### Function 4: `calculate_wave_velocity()` - signal_processor.py
+
 - **Status**: Incomplete
 - **Issue**: Missing implementation
 - **Fix Time**: 15 minutes
@@ -88,6 +95,7 @@ else:
 ## 3. MISSING FIRMWARE FEATURES
 
 ### ESP32 Firmware: `resoscan_firmware.ino`
+
 - **Status**: Code exists but untested
 - **Issues**:
   - No actual hardware to test with
@@ -96,6 +104,7 @@ else:
   - DAC waveform generation not validated
 
 ### What Needs To Be Done:
+
 1. [ ] Test with real ESP32 hardware
 2. [ ] Verify ADXL343 communication
 3. [ ] Validate waveform generation
@@ -110,12 +119,14 @@ else:
 ## 4. ML MODELS - INCOMPLETE
 
 ### Classifier.py - Feature Extraction
+
 - **Status**: Partially working
 - **Issue**: `extract_features()` failing in batch mode
 - **Impact**: ML training can't run
 - **Tests Failing**: 3 tests
 
 ### What Needs To Be Done:
+
 1. [ ] Debug batch feature extraction
 2. [ ] Fix vector dimension consistency
 3. [ ] Handle edge cases (empty signals, NaN values)
@@ -128,6 +139,7 @@ else:
 ## 5. UI DASHBOARD - NOT TESTED
 
 ### Beautiful Dashboard: `ui_dashboard/beautiful_dashboard.py`
+
 - **Status**: Code written but never tested
 - **Issues**:
   - No testing with real data
@@ -135,6 +147,7 @@ else:
   - Connection to signal processor not verified
 
 ### What Needs To Be Done:
+
 1. [ ] Test UI launches without errors
 2. [ ] Verify data display updates
 3. [ ] Test with simulate mode data
@@ -148,10 +161,12 @@ else:
 ## 6. INTEGRATION TESTING
 
 ### Complete Workflow Not Tested
+
 - **Issue**: `test_complete_workflow` failing
 - **Missing**: End-to-end testing with real data
 
 ### What Needs To Be Done:
+
 1. [ ] Fix individual component tests first
 2. [ ] Test signal processing → ML → UI workflow
 3. [ ] Test with synthetic data (simulate mode)
@@ -164,6 +179,7 @@ else:
 ## 7. DOCUMENTATION GAPS
 
 ### Missing:
+
 - [ ] API Documentation (docstrings for all functions)
 - [ ] Hardware Setup Guide (detailed wiring, flashing)
 - [ ] Troubleshooting Guide
@@ -171,6 +187,7 @@ else:
 - [ ] Calibration Procedure
 
 ### What Needs To Be Done:
+
 1. [ ] Add detailed docstrings to all functions
 2. [ ] Create hardware assembly guide
 3. [ ] Create calibration procedure
@@ -184,10 +201,12 @@ else:
 ## 8. DATA MANAGEMENT
 
 ### Data Directory: Empty
+
 - **Issue**: No mechanism to save/load measurements
 - **Impact**: Can't persist results
 
 ### What Needs To Be Done:
+
 1. [ ] Create measurement storage format (JSON/CSV)
 2. [ ] Implement `save_measurement()`
 3. [ ] Implement `load_measurement()`
@@ -201,12 +220,14 @@ else:
 ## 9. ERROR HANDLING & VALIDATION
 
 ### Currently Missing:
+
 - [ ] Input validation (check signal length, types, etc.)
 - [ ] Error messages are unclear
 - [ ] No graceful degradation
 - [ ] Edge cases not handled
 
 ### What Needs To Be Done:
+
 1. [ ] Add input validation to all functions
 2. [ ] Improve error messages
 3. [ ] Handle edge cases (short signals, all zeros, etc.)
@@ -219,12 +240,14 @@ else:
 ## 10. PERFORMANCE OPTIMIZATION
 
 ### Currently Not Done:
+
 - [ ] No profiling
 - [ ] No optimization for real-time processing
 - [ ] No caching of calculations
 - [ ] No parallel processing
 
 ### What Could Be Improved:
+
 1. [ ] Profile code to find bottlenecks
 2. [ ] Optimize FFT computation
 3. [ ] Cache repeated calculations
@@ -237,13 +260,15 @@ else:
 ## PRIORITY ORDER
 
 ### 🔴 CRITICAL (Do First)
+
 1. **Fix peak detection bug** - Blocks all tests
    - File: `signal_processor.py` line 115
    - Time: 15 minutes
    - Impact: Unblocks 8 failing tests
 
 ### 🟠 HIGH PRIORITY (Do Next)
-2. **Implement missing signal processor functions** 
+
+2. **Implement missing signal processor functions**
    - `calculate_tissue_stiffness_index()`
    - `calculate_pneumothorax_index()`
    - `calculate_wave_velocity()`
@@ -256,6 +281,7 @@ else:
    - Impact: ML training works
 
 ### 🟡 MEDIUM PRIORITY
+
 4. **Add error handling and validation**
    - Time: 1.5 hours
    - Impact: Stability
@@ -265,6 +291,7 @@ else:
    - Impact: Verification UI works
 
 ### 🟢 LOW PRIORITY (Optional)
+
 6. **Data persistence**
    - Time: 1 hour
    - Impact: Nice-to-have
@@ -278,6 +305,7 @@ else:
 ## QUICK FIX CHECKLIST
 
 ### Fix #1: Peak Detection (15 min)
+
 ```
 Location: signal_processing/signal_processor.py, line 100-125
 Problem: peaks array can be empty
@@ -286,6 +314,7 @@ Status: NOT DONE
 ```
 
 ### Fix #2: Signal Processing Tests (30 min)
+
 ```
 Location: Run all signal processor tests
 Problem: 5 tests failing due to peak detection
@@ -294,6 +323,7 @@ Status: DEPENDENT on Fix #1
 ```
 
 ### Fix #3: ML Classifier (30 min)
+
 ```
 Location: ml_models/classifier.py
 Problem: Batch feature extraction failing
@@ -302,6 +332,7 @@ Status: NOT DONE
 ```
 
 ### Fix #4: Integration Test (20 min)
+
 ```
 Location: tests/test_all.py, test_complete_workflow
 Problem: Complete workflow test failing
@@ -314,6 +345,7 @@ Status: DEPENDENT on Fixes #1-3
 ## WHAT'S ACTUALLY WORKING
 
 ✅ **Works Now**:
+
 - Core signal processor exists
 - ML models code exists
 - UI dashboard code exists
@@ -325,6 +357,7 @@ Status: DEPENDENT on Fixes #1-3
 - Some ML tests passing
 
 ❌ **Not Working Yet**:
+
 - Peak detection in signal processor
 - Clinical calculations
 - Batch ML feature extraction
@@ -337,22 +370,23 @@ Status: DEPENDENT on Fixes #1-3
 
 ## TIME ESTIMATE TO MAKE PRODUCTION READY
 
-| Task | Time | Priority |
-|------|------|----------|
-| Fix peak detection | 15 min | 🔴 CRITICAL |
-| Implement clinical functions | 1 hr | 🟠 HIGH |
-| Fix ML classifier | 30 min | 🟠 HIGH |
-| Add error handling | 1.5 hrs | 🟡 MEDIUM |
-| Test UI | 1 hr | 🟡 MEDIUM |
-| Data persistence | 1 hr | 🟢 LOW |
-| Documentation | 2-3 hrs | 🟢 LOW |
-| **TOTAL** | **~7-8 hours** | |
+| Task                         | Time           | Priority    |
+| ---------------------------- | -------------- | ----------- |
+| Fix peak detection           | 15 min         | 🔴 CRITICAL |
+| Implement clinical functions | 1 hr           | 🟠 HIGH     |
+| Fix ML classifier            | 30 min         | 🟠 HIGH     |
+| Add error handling           | 1.5 hrs        | 🟡 MEDIUM   |
+| Test UI                      | 1 hr           | 🟡 MEDIUM   |
+| Data persistence             | 1 hr           | 🟢 LOW      |
+| Documentation                | 2-3 hrs        | 🟢 LOW      |
+| **TOTAL**                    | **~7-8 hours** |             |
 
 ---
 
 ## HARDWARE REQUIREMENTS (For Full Testing)
 
 To complete remaining work:
+
 - [ ] ESP32 board (~$15)
 - [ ] ADXL343 accelerometer (~$5)
 - [ ] USB cable
@@ -366,6 +400,7 @@ To complete remaining work:
 **START HERE** (Do in order):
 
 1. **Fix peak detection bug** (15 min)
+
    ```
    File: signal_processing/signal_processor.py
    Line: 115
@@ -373,6 +408,7 @@ To complete remaining work:
    ```
 
 2. **Run tests again**
+
    ```
    python -m pytest tests/test_all.py -v
    ```
